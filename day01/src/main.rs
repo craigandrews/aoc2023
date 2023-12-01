@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::io::{self, BufRead};
 
 fn main() {
@@ -33,50 +32,49 @@ fn part1() {
     println!("{:?}", sum);
 }
 
+const DIGITS: [(&str, u32); 18] = [
+    ("1", 1),
+    ("2", 2),
+    ("3", 3),
+    ("4", 4),
+    ("5", 5),
+    ("6", 6),
+    ("7", 7),
+    ("8", 8),
+    ("9", 9),
+    ("one", 1),
+    ("two", 2),
+    ("three", 3),
+    ("four", 4),
+    ("five", 5),
+    ("six", 6),
+    ("seven", 7),
+    ("eight", 8),
+    ("nine", 9),
+];
+
 #[allow(dead_code)]
 fn part2() {
-    let map: HashMap<&str, u32> = [
-        ("1", 1),
-        ("2", 2),
-        ("3", 3),
-        ("4", 4),
-        ("5", 5),
-        ("6", 6),
-        ("7", 7),
-        ("8", 8),
-        ("9", 9),
-        ("one", 1),
-        ("two", 2),
-        ("three", 3),
-        ("four", 4),
-        ("five", 5),
-        ("six", 6),
-        ("seven", 7),
-        ("eight", 8),
-        ("nine", 9),
-    ]
-    .iter()
-    .cloned()
-    .collect();
-
     let stdin = io::stdin();
     let mut sum: u32 = 0;
     for line in stdin.lock().lines() {
         let line = line.expect("Failed to read line");
 
-        let (_, first) = map
-            .keys()
-            .filter_map(|substring| line.find(substring).map(|pos| (pos, substring)))
+        let first = DIGITS
+            .into_iter()
+            .filter_map(|(substring, value)| line.find(substring).map(|pos| (pos, value)))
             .min_by_key(|&(pos, _)| pos)
-            .expect("none found");
+            .expect("none found")
+            .1;
 
-        let (_, last) = map
-            .keys()
-            .filter_map(|substring| line.rfind(substring).map(|pos| (pos, substring)))
+        let last = DIGITS
+            .into_iter()
+            .filter_map(|(substring, value)| line.rfind(substring).map(|pos| (pos, value)))
             .max_by_key(|&(pos, _)| pos)
-            .expect("none found");
+            .expect("none found")
+            .1;
 
-        sum += (map[first] * 10) + map[last];
+        sum += (first * 10) + last;
     }
     println!("{}", sum);
 }
