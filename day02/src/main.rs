@@ -10,9 +10,11 @@ const MAX_RED: u32 = 12;
 const MAX_GREEN: u32 = 13;
 const MAX_BLUE: u32 = 14;
 
+const GAME_MATCHER: &str = r"(\d+) (red|green|blue)";
+
 #[allow(dead_code)]
 fn part1() {
-    let matcher: regex::Regex = Regex::new(r"(\d+) (red|green|blue)").unwrap();
+    let matcher: regex::Regex = Regex::new(GAME_MATCHER).unwrap();
     let mut game: u32 = 0;
     let lines = io::stdin().lock().lines();
     let result = lines.fold(0, |acc, line| -> u32 {
@@ -41,7 +43,7 @@ fn part1() {
 
 #[allow(dead_code)]
 fn part2() {
-    let matcher: regex::Regex = Regex::new(r"(\d+) (red|green|blue)").unwrap();
+    let matcher: regex::Regex = Regex::new(GAME_MATCHER).unwrap();
     let lines = io::stdin().lock().lines();
     let result = lines.fold(0, |acc, line| {
         let game = matcher
