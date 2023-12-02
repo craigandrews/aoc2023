@@ -1,8 +1,9 @@
 use regex::Regex;
+use std::cmp;
 use std::io::{self, BufRead};
 
 fn main() {
-    part1()
+    part2()
 }
 
 const MAX_RED: u32 = 12;
@@ -35,6 +36,32 @@ fn part1() {
                 }
                 return game;
             })
+            .sum::<u32>()
+    );
+}
+
+#[allow(dead_code)]
+fn part2() {
+    let matcher: regex::Regex = Regex::new(r"(\d+) (red|green|blue)").unwrap();
+    let stdin = io::stdin();
+
+    println!(
+        "{:?}",
+        stdin
+            .lock()
+            .lines()
+            .map(|line| matcher
+                .captures_iter(&line.unwrap())
+                .fold((0, 0, 0), |acc, capture| {
+                    let value: u32 = capture[1].parse().unwrap();
+                    match &capture[2] {
+                        "red" => (cmp::max(acc.0, value), acc.1, acc.2),
+                        "green" => (acc.0, cmp::max(acc.1, value), acc.2),
+                        "blue" => (acc.0, acc.1, cmp::max(acc.2, value)),
+                        _ => acc,
+                    }
+                }))
+            .map(|game| game.0 * game.1 * game.2)
             .sum::<u32>()
     );
 }
