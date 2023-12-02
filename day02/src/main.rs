@@ -17,13 +17,18 @@ fn part1() {
     let lines = io::stdin().lock().lines();
     let result = lines.fold(0, |acc, line| -> u32 {
         game += 1;
-        let is_impossible = matcher.captures_iter(&line.unwrap()).any(|capture| match &capture[2] {
-                        "red" => MAX_RED,
-                        "green" => MAX_GREEN,
-                        "blue" => MAX_BLUE,
-                        _ => 0,
-                    } <= capture[1].parse().unwrap()
-                );
+        let is_impossible = matcher.captures_iter(&line.unwrap()).any(|capture| {
+            let color = &capture[2];
+            let value: u32 = capture[1].parse().unwrap();
+            let max = match color {
+                "red" => MAX_RED,
+                "green" => MAX_GREEN,
+                "blue" => MAX_BLUE,
+                _ => 0,
+            };
+            value > max
+        });
+
         if is_impossible {
             acc
         } else {
