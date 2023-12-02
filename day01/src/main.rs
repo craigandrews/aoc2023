@@ -53,23 +53,6 @@ const DIGITS: [(&str, u32); 18] = [
     ("nine", 9),
 ];
 
-fn line_value(line: &str) -> Option<u32> {
-    let first = DIGITS
-        .into_iter()
-        .filter_map(|(substring, value)| line.find(substring).map(|pos| (pos, value)))
-        .min_by_key(|&(pos, _)| pos);
-
-    let last = DIGITS
-        .into_iter()
-        .filter_map(|(substring, value)| line.rfind(substring).map(|pos| (pos, value)))
-        .max_by_key(|&(pos, _)| pos);
-
-    match (first, last) {
-        (Some(first), Some(last)) => Some(first.1 * 10 + last.1),
-        _ => None,
-    }
-}
-
 #[allow(dead_code)]
 fn part2() {
     println!(
@@ -77,7 +60,24 @@ fn part2() {
         io::stdin()
             .lock()
             .lines()
-            .filter_map(|line| line_value(&line.expect("bad line")))
+            .filter_map(|line| {
+                let line = line.unwrap();
+
+                let first = DIGITS
+                    .into_iter()
+                    .filter_map(|(substring, value)| line.find(substring).map(|pos| (pos, value)))
+                    .min_by_key(|&(pos, _)| pos);
+
+                let last = DIGITS
+                    .into_iter()
+                    .filter_map(|(substring, value)| line.rfind(substring).map(|pos| (pos, value)))
+                    .max_by_key(|&(pos, _)| pos);
+
+                match (first, last) {
+                    (Some(first), Some(last)) => Some(first.1 * 10 + last.1),
+                    _ => None,
+                }
+            })
             .sum::<u32>()
     );
 }
