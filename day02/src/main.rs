@@ -22,19 +22,13 @@ fn part1() {
             .lines()
             .map(|line| -> u32 {
                 game += 1;
-                if matcher.captures_iter(&line.unwrap()).any(|capture| {
-                    let value: u32 = capture[1].parse().unwrap();
-                    let max = match &capture[2] {
+                if matcher.captures_iter(&line.unwrap()).any(|capture| match &capture[2] {
                         "red" => MAX_RED,
                         "green" => MAX_GREEN,
                         "blue" => MAX_BLUE,
                         _ => 0,
-                    };
-                    return value > max;
-                }) {
-                    return 0;
-                }
-                return game;
+                    } <= capture[1].parse().unwrap()
+                ) { 0 } else { game }
             })
             .sum::<u32>()
     );
