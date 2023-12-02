@@ -3,7 +3,7 @@ use std::cmp;
 use std::io::{self, BufRead};
 
 fn main() {
-    part2()
+    part1()
 }
 
 const MAX_RED: u32 = 12;
@@ -15,10 +15,8 @@ const GAME_MATCHER: &str = r"(\d+) (red|green|blue)";
 #[allow(dead_code)]
 fn part1() {
     let matcher: regex::Regex = Regex::new(GAME_MATCHER).unwrap();
-    let mut game: u32 = 0;
     let lines = io::stdin().lock().lines();
-    let result = lines.fold(0, |acc, line| -> u32 {
-        game += 1;
+    let result = lines.enumerate().fold(0, |acc, (game, line)| -> usize {
         let is_impossible = matcher.captures_iter(&line.unwrap()).any(|capture| {
             let color = &capture[2];
             let value: u32 = capture[1].parse().unwrap();
@@ -34,7 +32,7 @@ fn part1() {
         if is_impossible {
             acc
         } else {
-            acc + game
+            acc + game + 1
         }
     });
 
