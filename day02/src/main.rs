@@ -1,9 +1,9 @@
 use regex::Regex;
 use std::cmp;
-use std::io::{self, BufRead};
+use std::io;
 
 fn main() {
-    part1()
+    part2()
 }
 
 const MAX_RED: u32 = 12;
@@ -15,7 +15,7 @@ const GAME_MATCHER: &str = r"(\d+) (red|green|blue)";
 #[allow(dead_code)]
 fn part1() {
     let matcher: regex::Regex = Regex::new(GAME_MATCHER).unwrap();
-    let lines = io::stdin().lock().lines();
+    let lines = io::stdin().lines();
     let result = lines.enumerate().fold(0, |acc, (game, line)| -> usize {
         let is_impossible = matcher.captures_iter(&line.unwrap()).any(|capture| {
             let color = &capture[2];
@@ -42,7 +42,7 @@ fn part1() {
 #[allow(dead_code)]
 fn part2() {
     let matcher: regex::Regex = Regex::new(GAME_MATCHER).unwrap();
-    let lines = io::stdin().lock().lines();
+    let lines = io::stdin().lines();
     let result = lines.fold(0, |acc, line| {
         let game = matcher
             .captures_iter(&line.unwrap())

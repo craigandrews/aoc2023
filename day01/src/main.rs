@@ -1,4 +1,4 @@
-use std::io::{self, BufRead};
+use std::io;
 
 fn main() {
     part2()
@@ -8,7 +8,7 @@ fn main() {
 fn part1() {
     let stdin = io::stdin();
     let mut sum: u32 = 0;
-    for line in stdin.lock().lines() {
+    for line in stdin.lines() {
         let line = line.expect("Failed to read line");
 
         let first_digit = line
@@ -58,7 +58,6 @@ fn part2() {
     println!(
         "{}",
         io::stdin()
-            .lock()
             .lines()
             .filter_map(|line| {
                 let line = line.unwrap();
