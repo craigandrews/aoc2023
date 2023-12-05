@@ -4,7 +4,6 @@ fn main() {
     part2();
 }
 
-#[allow(dead_code)]
 fn map_value(mapping: &Vec<(i64, i64, i64)>, v: i64) -> i64 {
     for m in mapping {
         if v < m.0 {
@@ -71,18 +70,6 @@ fn part1() {
 }
 
 #[allow(dead_code)]
-fn unmap_value(mapping: &Vec<(i64, i64, i64)>, v: i64) -> i64 {
-    for m in mapping {
-        let x = v - m.2;
-
-        if x >= m.0 && x <= m.1 {
-            return x;
-        }
-    }
-    return v;
-}
-
-#[allow(dead_code)]
 fn part2() {
     let mut seeds: Vec<(i64, i64)> = Default::default();
 
@@ -105,7 +92,6 @@ fn part2() {
         } else if line.ends_with("map:") {
             if !tmp.is_empty() {
                 tmp.sort();
-                tmp.reverse();
                 mappings.push(tmp);
                 tmp = Default::default();
             }
@@ -117,13 +103,12 @@ fn part2() {
             let start = values[1];
             let end = values[1] + values[2] - 1;
             let diff: i64 = values[0] - values[1];
-            tmp.push((start, end, diff));
+            tmp.push((start + diff, end + diff, 0 - diff));
         }
     }
 
     if !tmp.is_empty() {
         tmp.sort();
-        tmp.reverse();
         mappings.push(tmp);
     }
     mappings.reverse();
@@ -132,10 +117,8 @@ fn part2() {
     loop {
         let mut seed: i64 = location;
         for mapping in mappings.iter() {
-            seed = unmap_value(mapping, seed);
+            seed = map_value(mapping, seed);
         }
-
-        location += 1;
 
         if seeds
             .iter()
@@ -143,6 +126,8 @@ fn part2() {
         {
             break;
         }
+
+        location += 1;
     }
 
     println!("{}", location);
