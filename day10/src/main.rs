@@ -1,6 +1,6 @@
-use std::io;
+use std::{cmp, collections::HashSet, io};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum Tile {
     Ground,
     Start,
@@ -100,6 +100,7 @@ fn first_move(start: Coord, lines: &Vec<Vec<Tile>>) -> Option<Dir> {
 fn main() {
     let lines = parse_input();
     println!("{}", part1(&lines));
+    println!("{}", part2(&lines));
 }
 
 fn part1(lines: &Vec<Vec<Tile>>) -> usize {
@@ -147,4 +148,92 @@ fn part1(lines: &Vec<Vec<Tile>>) -> usize {
             return steps / 2 + steps % 2;
         }
     }
+}
+
+fn part2(lines: &Vec<Vec<Tile>>) -> usize {
+    let start = find_start(&lines);
+    let mut pos = start;
+    let mut dir = first_move(start, &lines).unwrap();
+
+    let mut path_coords: HashSet<Coord> = HashSet::new();
+    path_coords.insert(pos);
+    loop {
+        (pos, dir) = match dir {
+            Dir::N => match lines[pos.0 - 1][pos.1] {
+                Tile::NS => Some(((pos.0 - 1, pos.1), Dir::N)),
+                Tile::SE => Some(((pos.0 - 1, pos.1), Dir::E)),
+                Tile::SW => Some(((pos.0 - 1, pos.1), Dir::W)),
+                Tile::Start => Some(((pos.0 - 1, pos.1), Dir::N)),
+                _ => None,
+            },
+            Dir::S => match lines[pos.0 + 1][pos.1] {
+                Tile::NS => Some(((pos.0 + 1, pos.1), Dir::S)),
+                Tile::NE => Some(((pos.0 + 1, pos.1), Dir::E)),
+                Tile::NW => Some(((pos.0 + 1, pos.1), Dir::W)),
+                Tile::Start => Some(((pos.0 + 1, pos.1), Dir::S)),
+                _ => None,
+            },
+            Dir::E => match lines[pos.0][pos.1 + 1] {
+                Tile::EW => Some(((pos.0, pos.1 + 1), Dir::E)),
+                Tile::NW => Some(((pos.0, pos.1 + 1), Dir::N)),
+                Tile::SW => Some(((pos.0, pos.1 + 1), Dir::S)),
+                Tile::Start => Some(((pos.0, pos.1 + 1), Dir::E)),
+                _ => None,
+            },
+            Dir::W => match lines[pos.0][pos.1 - 1] {
+                Tile::EW => Some(((pos.0, pos.1 - 1), Dir::W)),
+                Tile::NE => Some(((pos.0, pos.1 - 1), Dir::N)),
+                Tile::SE => Some(((pos.0, pos.1 - 1), Dir::S)),
+                Tile::Start => Some(((pos.0, pos.1 - 1), Dir::W)),
+                _ => None,
+            },
+        }
+        .unwrap();
+
+        path_coords.insert(pos);
+
+        if lines[pos.0][pos.1] == Tile::Start {
+            break;
+        }
+    }
+
+    let mut enclosed = 0;
+    for y in 0..lines.len() {
+        for x in 0..lines[y].len() {
+            let coord = (y, x);
+
+            if path_coords.contains(&coord) {
+                continue;
+            }
+
+            let mut n = 0;
+            let mut s = 0;
+            for i in x + 1..lines[y].len() {
+                if !path_coords.contains(&(y, i)) {
+                    continue;
+                }
+
+                let tile = if lines[y][i] == Tile::Start {
+                    Tile::NE // for my input, the S is actually a L
+                } else {
+                    lines[y][i]
+                };
+
+                match tile {
+                    Tile::NS => {
+                        n += 1;
+                        s += 1;
+                    }
+                    Tile::NW | Tile::NE => n += 1,
+                    Tile::SW | Tile::SE => s += 1,
+                    Tile::Start => n += 1, // pretend Start = L
+                    _ => (),
+                }
+            }
+
+            enclosed += cmp::min(n, s) % 2;
+        }
+    }
+
+    enclosed
 }
