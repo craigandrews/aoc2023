@@ -13,26 +13,24 @@ fn parse_input() -> Vec<Vec<i64>> {
 }
 
 fn next_value(_values: &Vec<i64>) -> i64 {
-    let last = _values.last().unwrap();
-
     if _values.iter().all(|v| *v == 0) {
         return 0;
     }
 
     let mut p = *(_values.first().unwrap());
-
-    *last
-        + next_value(
-            &_values
-                .iter()
-                .skip(1)
-                .map(|v| {
-                    let mut v = *v;
-                    (p, v) = (v, v - p);
-                    v
-                })
-                .collect(),
-        )
+    let last = *(_values.last().unwrap());
+    let next = next_value(
+        &_values
+            .iter()
+            .skip(1)
+            .map(|v| {
+                let mut v = *v;
+                (p, v) = (v, v - p);
+                v
+            })
+            .collect(),
+    );
+    last + next
 }
 
 fn main() {
