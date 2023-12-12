@@ -43,36 +43,44 @@ fn empty_cols(map: &Vec<Vec<char>>) -> HashSet<isize> {
     }))
 }
 
+fn galaxy_pairs(galaxies: &Vec<Coord>) -> Vec<(Coord, Coord)> {
+    let mut pairs: Vec<(Coord, Coord)> = vec![];
+    for (ix, first) in galaxies.iter().enumerate() {
+        for second in galaxies[ix + 1..].iter() {
+            pairs.push((*first, *second));
+        }
+    }
+    pairs
+}
+
 fn total_distance(expansion: isize, map: &Vec<Vec<char>>) -> isize {
     let expand_cols = empty_cols(&map);
     let expand_rows = empty_rows(&map);
     let galaxies = find_galaxies(&map);
 
     let mut total = 0;
-    for (ix, first) in galaxies.iter().enumerate() {
-        for second in galaxies[ix + 1..].iter() {
-            let (sx, ex) = (cmp::min(first.0, second.0), cmp::max(first.0, second.0));
-            let (sy, ey) = (cmp::min(first.1, second.1), cmp::max(first.1, second.1));
+    for (first, second) in galaxy_pairs(&galaxies) {
+        let (sx, ex) = (cmp::min(first.0, second.0), cmp::max(first.0, second.0));
+        let (sy, ey) = (cmp::min(first.1, second.1), cmp::max(first.1, second.1));
 
-            total += (sx..ex)
-                .map(|x| {
-                    if expand_cols.contains(&x) {
-                        expansion
-                    } else {
-                        1
-                    }
-                })
-                .sum::<isize>();
-            total += (sy..ey)
-                .map(|y| {
-                    if expand_rows.contains(&y) {
-                        expansion
-                    } else {
-                        1
-                    }
-                })
-                .sum::<isize>();
-        }
+        total += (sx..ex)
+            .map(|x| {
+                if expand_cols.contains(&x) {
+                    expansion
+                } else {
+                    1
+                }
+            })
+            .sum::<isize>();
+        total += (sy..ey)
+            .map(|y| {
+                if expand_rows.contains(&y) {
+                    expansion
+                } else {
+                    1
+                }
+            })
+            .sum::<isize>();
     }
 
     total
