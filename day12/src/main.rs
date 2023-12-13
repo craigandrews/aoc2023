@@ -39,10 +39,7 @@ fn count_matches(rec: &Record) -> usize {
             let mut as_spring = rec.0.clone();
             as_spring[pos] = '#';
 
-            let t = count_matches(&(as_empty, rec.1.clone()))
-                + count_matches(&(as_spring, rec.1.clone()));
-            println!("{}", t);
-            t
+            count_matches(&(as_empty, rec.1.clone())) + count_matches(&(as_spring, rec.1.clone()))
         }
         None => {
             if is_valid(rec) {
