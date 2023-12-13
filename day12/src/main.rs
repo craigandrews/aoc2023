@@ -30,7 +30,7 @@ fn count_matches(rec: &Record) -> usize {
 
         if springs.len() < counts.iter().sum::<usize>() + counts.len() {
             // not enough space left for the remaining groups plus
-            // their required boundary
+            // their required boundaries (extra . helps here)
             return 0;
         }
 
@@ -46,7 +46,7 @@ fn count_matches(rec: &Record) -> usize {
 
         if springs[0] != '#' {
             // assume next one is not damaged so skip it
-            matches += inner_(&springs[1..].to_vec(), counts, cache);
+            matches += inner_(&springs[1..], counts, cache);
         }
 
         let next = counts[0];
@@ -55,7 +55,7 @@ fn count_matches(rec: &Record) -> usize {
             // none of them are ok, and the spring following the block is
             // not damaged, therefore the next group fits into the
             // next block of springs.
-            // seems to work?
+            // extra . helps here too.
             matches += inner_(&springs[next + 1..], &counts[1..], cache);
         }
 
@@ -88,6 +88,7 @@ fn part1(input: &Vec<Record>) {
 }
 
 fn part2(input: &Vec<Record>) {
+    // replicate each record 5 times with separators
     let input: Vec<Record> = input
         .iter()
         .map(|rec| {
