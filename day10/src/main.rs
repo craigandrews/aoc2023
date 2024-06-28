@@ -50,10 +50,10 @@ fn parse_input() -> Vec<Vec<Tile>> {
         .collect()
 }
 
-fn find_start(lines: &Vec<Vec<Tile>>) -> Coord {
-    for y in 0..lines.len() {
-        for x in 0..lines[y].len() {
-            if lines[y][x] == Tile::Start {
+fn find_start(lines: &[Vec<Tile>]) -> Coord {
+    for (y, row) in lines.iter().enumerate() {
+        for (x, tile) in row.iter().enumerate() {
+            if *tile == Tile::Start {
                 return (y, x);
             }
         }
@@ -61,7 +61,7 @@ fn find_start(lines: &Vec<Vec<Tile>>) -> Coord {
     (0, 0)
 }
 
-fn first_move(start: Coord, lines: &Vec<Vec<Tile>>) -> Option<Dir> {
+fn first_move(start: Coord, lines: &[Vec<Tile>]) -> Option<Dir> {
     if start.0 > 0 {
         let coord: Coord = (start.0 - 1, start.1);
         match lines[coord.0][coord.1] {
@@ -103,10 +103,10 @@ fn main() {
     println!("{}", part2(&lines));
 }
 
-fn part1(lines: &Vec<Vec<Tile>>) -> usize {
-    let start = find_start(&lines);
+fn part1(lines: &[Vec<Tile>]) -> usize {
+    let start = find_start(lines);
     let mut pos = start;
-    let mut dir = first_move(start, &lines).unwrap();
+    let mut dir = first_move(start, lines).unwrap();
 
     let mut steps = 0;
     loop {
@@ -150,10 +150,10 @@ fn part1(lines: &Vec<Vec<Tile>>) -> usize {
     }
 }
 
-fn part2(lines: &Vec<Vec<Tile>>) -> usize {
-    let start = find_start(&lines);
+fn part2(lines: &[Vec<Tile>]) -> usize {
+    let start = find_start(lines);
     let mut pos = start;
-    let mut dir = first_move(start, &lines).unwrap();
+    let mut dir = first_move(start, lines).unwrap();
 
     let mut path_coords: HashSet<Coord> = HashSet::new();
     path_coords.insert(pos);
@@ -198,8 +198,8 @@ fn part2(lines: &Vec<Vec<Tile>>) -> usize {
     }
 
     let mut enclosed = 0;
-    for y in 0..lines.len() {
-        for x in 0..lines[y].len() {
+    for (y, row) in lines.iter().enumerate() {
+        for x in 0..row.len() {
             let coord = (y, x);
 
             if path_coords.contains(&coord) {
